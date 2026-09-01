@@ -8,6 +8,10 @@
   <title>My Health Tracker</title>
 
   <style>
+    canvas {
+    max-width: 100%;
+    height: auto;
+}
     body {
       font-family: Arial, sans-serif;
       max-width: 600px;
@@ -209,7 +213,11 @@ function printHealthReport() {
         <head>
             <title>Health Report</title>
             <style>
-                body {
+   @page {
+    size: A4;
+    margin: 15mm;
+}      
+            body {
                     font-family: Arial, sans-serif;
                     margin: 40px;
                     line-height: 1.4;
@@ -227,6 +235,7 @@ function printHealthReport() {
                     margin-bottom: 16px;
                 }
             </style>
+            
         </head>
         <body>
             <h1>Health Report</h1>
