@@ -124,6 +124,23 @@
     <h3>Blood Glucose Trend</h3>
 <canvas id="glucoseChart" width="600" height="300"></canvas>
 </div>
+
+  <div class="card">
+  <h2>Health Report</h2>
+
+  <label for="reportPeriod">Report period:</label>
+  <select id="reportPeriod">
+    <option value="7">Last 7 Days</option>
+    <option value="30">Last 30 Days</option>
+    <option value="90">Last 90 Days</option>
+  </select>
+
+  <button type="button" id="generateReportButton">
+    Generate Report
+  </button>
+
+  <div id="healthReport"></div>
+</div>
   
   <h2>Previous Readings</h2>
   <div id="history"></div>
@@ -175,7 +192,88 @@
       drawPulseChart();
       drawGlucoseChart();
     }
-function displayTrends() {
+function generateHealthReport() {
+    const readings = getReadings();
+    const days = Number(document.getElementById("reportPeriod").value);
+    const report = document.getElementById("healthReport");
+    const now = new Date();
+
+    const cutoff = new Date();
+    cutoff.setDate(now.getDate() - days);
+
+    const selectedReadings = readings.filter(function(reading) {
+        const readingDate = new Date(
+            reading.time
+                ? reading.date + " " + reading.time
+                : reading.date
+        );
+
+        return !isNaN(readingDate) && readingDate >= cutoff;
+    });
+
+    if (selectedReadings.length === 0) {
+        report.innerHTML =
+            "<p>No readings found for the selected period.</p>";
+        return;
+    }
+
+    function average(field) {
+        const values = selectedReadings
+            .map(function(reading) {
+                return Number(reading[field]);
+            })
+            .filter(function(value) {
+                return !isNaN(value) && value > 0;
+            });
+
+        if (values.length === 0) {
+            return "—";
+        }
+
+        const total = values.reduce(function(sum, value) {
+            return sum + value;
+        }, 0);
+
+        return Math.round(total / values.length);
+    }
+
+    let html =
+        "<h3>Last " + days + " Days</h3>" +
+        "<p><b>Number of readings:</b> " +
+        selectedReadings.length + "</p>" +
+
+        "<p><b>Average blood pressure:</b> " +
+        average("systolic") + "/" +
+        average("diastolic") + " mmHg<br>" +
+
+        "<b>Average pulse:</b> " +
+        average("pulse") + " bpm<br>" +
+
+        "<b>Average blood glucose:</b> " +
+        average("glucose") + " mg/dL</p>" +
+
+        "<h3>Readings</h3>";
+
+    selectedReadings
+        .slice()
+        .reverse()
+        .forEach(function(reading) {
+            html +=
+                "<p>" +
+                "<b>" + (reading.date || "") + "</b> " +
+                (reading.time || "") + "<br>" +
+                "Blood pressure: " +
+                reading.systolic + "/" +
+                reading.diastolic + " mmHg<br>" +
+                "Pulse: " + reading.pulse + " bpm<br>" +
+                "Blood glucose: " +
+                (reading.glucose || "—") + " mg/dL" +
+                "</p>";
+        });
+
+    report.innerHTML = html;
+} 
+    function displayTrends() {
     const readings = getReadings();
     const now = new Date();
 
@@ -891,10 +989,13 @@ function deleteAllReadings() {
 document
   .getElementById("deleteAllButton")
   .addEventListener("click", deleteAllReadings);
-
-  document
+document
   .getElementById("exportCsvButton")
   .addEventListener("click", exportToCSV);
+
+document
+  .getElementById("generateReportButton")
+  .addEventListener("click", generateHealthReport);
     
     document
       .getElementById("restoreFile")
