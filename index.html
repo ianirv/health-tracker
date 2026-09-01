@@ -108,6 +108,16 @@
       style="display:none">
   </div>
 
+  <div class="card">
+  <h2>Trends</h2>
+
+  <h3>Last 7 Days</h3>
+  <div id="trends7">Not enough data yet.</div>
+
+  <h3>Last 30 Days</h3>
+  <div id="trends30">Not enough data yet.</div>
+</div>
+  
   <h2>Previous Readings</h2>
   <div id="history"></div>
 
@@ -153,8 +163,68 @@
 '</div>'
         );
       }).join("");
+      displayTrends();
     }
-function deleteReading(index) {
+function displayTrends() {
+    const readings = getReadings();
+    const now = new Date();
+
+    function calculateAverage(days) {
+        const cutoff = new Date();
+        cutoff.setDate(now.getDate() - days);
+
+        const recent = readings.filter(function(reading) {
+            const readingDate = new Date(
+                reading.time
+                    ? reading.date + " " + reading.time
+                    : reading.date
+            );
+
+            return !isNaN(readingDate) && readingDate >= cutoff;
+        });
+
+        if (recent.length === 0) {
+            return "Not enough data yet.";
+        }
+
+        function average(field) {
+            const values = recent
+                .map(function(reading) {
+                    return Number(reading[field]);
+                })
+                .filter(function(value) {
+                    return !isNaN(value) && value > 0;
+                });
+
+            if (values.length === 0) return "—";
+
+            const total = values.reduce(function(sum, value) {
+                return sum + value;
+            }, 0);
+
+            return Math.round(total / values.length);
+        }
+
+        return (
+            "<b>Readings:</b> " + recent.length + "<br>" +
+            "<b>Blood pressure:</b> " +
+            average("systolic") + "/" +
+            average("diastolic") + " mmHg<br>" +
+            "<b>Pulse:</b> " +
+            average("pulse") + " bpm<br>" +
+            "<b>Blood glucose:</b> " +
+            average("glucose") + " mg/dL"
+        );
+    }
+
+    document.getElementById("trends7").innerHTML =
+        calculateAverage(7);
+
+    document.getElementById("trends30").innerHTML =
+        calculateAverage(30);
+}
+    
+    function deleteReading(index) {
     const readings = getReadings();
 
     if (!confirm("Delete this reading?")) {
