@@ -113,9 +113,10 @@
 
   <h3>Last 7 Days</h3>
   <div id="trends7">Not enough data yet.</div>
-
   <h3>Last 30 Days</h3>
   <div id="trends30">Not enough data yet.</div>
+    <h3>Last 90 Days</h3>
+<div id="trends90">Not enough data yet.</div>
 </div>
   
   <h2>Previous Readings</h2>
@@ -222,6 +223,8 @@ function displayTrends() {
 
     document.getElementById("trends30").innerHTML =
         calculateAverage(30);
+  document.getElementById("trends90").innerHTML =
+    calculateAverage(90);
 }
     
     function deleteReading(index) {
