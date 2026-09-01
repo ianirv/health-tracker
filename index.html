@@ -340,24 +340,35 @@ ctx.textAlign = "left";
     ctx.fillText("Systolic", padding, 20);
     ctx.fillText("Diastolic", padding + 90, 20);
 // Date labels along bottom
-ctx.font = "11px Arial";
+ctx.font = "10px Arial";
 ctx.textAlign = "center";
 
 readings.forEach(function(reading, index) {
     const x = getX(index);
 
     let dateLabel = reading.date || "";
+    let timeLabel = reading.time || "";
 
-    // Keep the label short
-    if (dateLabel.includes(",")) {
-        dateLabel = dateLabel.split(",")[0];
+    // Older readings stored date and time together
+    if (!timeLabel && dateLabel.includes(",")) {
+        const parts = dateLabel.split(",");
+        dateLabel = parts[0].trim();
+        timeLabel = parts.slice(1).join(",").trim();
     }
 
     ctx.fillText(
         dateLabel,
         x,
-        height - padding + 20
+        height - padding + 16
     );
+
+    if (timeLabel) {
+        ctx.fillText(
+            timeLabel,
+            x,
+            height - padding + 30
+        );
+    }
 });
 
 ctx.textAlign = "left";
