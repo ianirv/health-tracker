@@ -1,252 +1,171 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#1976d2">
-<link rel="manifest" href="manifest.json">
-<title>My Health Tracker</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#1976d2">
+  <link rel="manifest" href="./manifest.json">
+  <title>My Health Tracker</title>
 
-<style>
-body {
-  font-family: Arial, sans-serif;
-  max-width: 600px;
-  margin: auto;
-  padding: 16px;
-  background: #f4f6f8;
-}
-h1 { text-align: center; }
-.card {
-  background: white;
-  padding: 18px;
-  margin-bottom: 20px;
-  border-radius: 12px;
-}
-label {
-  display: block;
-  margin-top: 14px;
-  font-weight: bold;
-}
-input {
-  width: 100%;
-  box-sizing: border-box;
-  padding: 12px;
-  margin-top: 5px;
-  font-size: 18px;
-}
-button {
-  width: 100%;
-  padding: 14px;
-  margin-top: 20px;
-  font-size: 18px;
-  border: 0;
-  border-radius: 8px;
-  background: #1976d2;
-  color: white;
-}
-.reading {
-  background: white;
-  padding: 12px;
-  margin-bottom: 10px;
-  border-radius: 8px;
-}
-.date { font-weight: bold; }
-</style>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 600px;
+      margin: auto;
+      padding: 16px;
+      background: #f4f6f8;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    .card {
+      background: white;
+      padding: 18px;
+      margin-bottom: 20px;
+      border-radius: 12px;
+    }
+
+    label {
+      display: block;
+      margin-top: 14px;
+      font-weight: bold;
+    }
+
+    input {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 12px;
+      margin-top: 5px;
+      font-size: 18px;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      margin-top: 20px;
+      font-size: 18px;
+      border: 0;
+      border-radius: 8px;
+      background: #1976d2;
+      color: white;
+    }
+
+    .reading {
+      background: white;
+      padding: 12px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+    }
+
+    .date {
+      font-weight: bold;
+    }
+  </style>
 </head>
 
 <body>
 
-<h1>My Health Tracker</h1>
+  <h1>My Health Tracker</h1>
 
-<div class="card">
+  <div class="card">
 
-<label>Systolic blood pressure</label>
-<input id="systolic" type="number" placeholder="e.g. 125">
+    <label for="systolic">Systolic blood pressure</label>
+    <input id="systolic" type="number" inputmode="numeric"
+           placeholder="e.g. 125">
 
-<label>Diastolic blood pressure</label>
-<input id="diastolic" type="number" placeholder="e.g. 65">
+    <label for="diastolic">Diastolic blood pressure</label>
+    <input id="diastolic" type="number" inputmode="numeric"
+           placeholder="e.g. 65">
 
-<label>Pulse / heartbeat</label>
-<input id="pulse" type="number" placeholder="e.g. 72">
+    <label for="pulse">Pulse / heartbeat</label>
+    <input id="pulse" type="number" inputmode="numeric"
+           placeholder="e.g. 72">
 
-<label>Blood sugar (mg/dL)</label>
-<input id="glucose" type="number" placeholder="Optional">
+    <label for="glucose">Blood sugar (mg/dL)</label>
+    <input id="glucose" type="number" inputmode="decimal"
+           placeholder="Optional">
 
-<button onclick="saveReading()">Save Reading</button>
+    <button type="button" onclick="saveReading()">Save Reading</button>
 
-</div>
+  </div>
 
-<h2>Previous Readings</h2>
-<div id="history"></div>
+  <h2>Previous Readings</h2>
+  <div id="history"></div>
 
-<script>
-function getReadings() {
-  return JSON.parse(localStorage.getItem("healthReadings") || "[]");
-}
+  <script>
+    function getReadings() {
+      try {
+        return JSON.parse(localStorage.getItem("healthReadings") || "[]");
+      } catch {
+        return [];
+      }
+    }
 
-function saveReading() {
-  const systolic = document.getElementById("systolic").value;
-  const diastolic = document.getElementById("diastolic").value;
-  const pulse = document.getElementById("pulse").value;
-  const glucose = document.getElementById("glucose").value;
+    function saveReading() {
+      const systolic = document.getElementById("systolic").value;
+      const diastolic = document.getElementById("diastolic").value;
+      const pulse = document.getElementById("pulse").value;
+      const glucose = document.getElementById("glucose").value;
 
-  if (!systolic || !diastolic || !pulse) {
-    alert("Please enter blood pressure and pulse.");
-    return;
-  }
+      if (!systolic || !diastolic || !pulse) {
+        alert("Please enter blood pressure and pulse.");
+        return;
+      }
 
-  const readings = getReadings();
+      const readings = getReadings();
 
-  readings.unshift({
-    date: new Date().toLocaleString(),
-    systolic,
-    diastolic,
-    pulse,
-    glucose
-  });
+      readings.unshift({
+        date: new Date().toLocaleString(),
+        systolic: systolic,
+        diastolic: diastolic,
+        pulse: pulse,
+        glucose: glucose
+      });
 
-  localStorage.setItem("healthReadings", JSON.stringify(readings));
+      localStorage.setItem("healthReadings", JSON.stringify(readings));
 
-  document.getElementById("systolic").value = "";
-  document.getElementById("diastolic").value = "";
-  document.getElementById("pulse").value = "";
-  document.getElementById("glucose").value = "";
+      document.getElementById("systolic").value = "";
+      document.getElementById("diastolic").value = "";
+      document.getElementById("pulse").value = "";
+      document.getElementById("glucose").value = "";
 
-  displayReadings();
-}
+      displayReadings();
+    }
 
-function displayReadings() {
-  const readings = getReadings();
-  const history = document.getElementById("history");
+    function displayReadings() {
+      const readings = getReadings();
+      const history = document.getElementById("history");
 
-  if (readings.length === 0) {
-    history.innerHTML = "<p>No readings recorded yet.</p>";
-    return;
-  }
+      if (readings.length === 0) {
+        history.innerHTML = "<p>No readings recorded yet.</p>";
+        return;
+      }
 
-  history.innerHTML = readings.map(r => `
-    <div class="reading">
-      <div class="date">${r.date}</div>
-      Blood pressure: ${r.systolic}/${r.diastolic} mmHg<br>
-      Pulse: ${r.pulse} bpm
-      ${r.glucose ? `<br>Blood sugar: ${r.glucose} mg/dL` : ""}
-    </div>
-  `).join("");
-}
+      history.innerHTML = readings.map(function(r) {
+        return `
+          <div class="reading">
+            <div class="date">${r.date}</div>
+            Blood pressure: ${r.systolic}/${r.diastolic} mmHg<br>
+            Pulse: ${r.pulse} bpm
+            ${r.glucose ? `<br>Blood sugar: ${r.glucose} mg/dL` : ""}
+          </div>
+        `;
+      }).join("");
+    }
 
-displayReadings();
-</script>
+    displayReadings();
 
-<script>
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("./service-worker.js");
-  });
-}
-</script>
-
-</body>
-</html>  width: 100%;
-  padding: 14px;
-  margin-top: 20px;
-  font-size: 18px;
-  border: 0;
-  border-radius: 8px;
-  background: #1976d2;
-  color: white;
-}
-.reading {
-  background: white;
-  padding: 12px;
-  margin-bottom: 10px;
-  border-radius: 8px;
-}
-.date { font-weight: bold; }
-</style>
-</head>
-
-<body>
-
-<h1>My Health Tracker</h1>
-
-<div class="card">
-
-<label>Systolic blood pressure</label>
-<input id="systolic" type="number" placeholder="e.g. 125">
-
-<label>Diastolic blood pressure</label>
-<input id="diastolic" type="number" placeholder="e.g. 65">
-
-<label>Pulse / heartbeat</label>
-<input id="pulse" type="number" placeholder="e.g. 72">
-
-<label>Blood sugar (mg/dL)</label>
-<input id="glucose" type="number" placeholder="Optional">
-
-<button onclick="saveReading()">Save Reading</button>
-
-</div>
-
-<h2>Previous Readings</h2>
-<div id="history"></div>
-
-<script>
-function getReadings() {
-  return JSON.parse(localStorage.getItem("healthReadings") || "[]");
-}
-
-function saveReading() {
-  const systolic = document.getElementById("systolic").value;
-  const diastolic = document.getElementById("diastolic").value;
-  const pulse = document.getElementById("pulse").value;
-  const glucose = document.getElementById("glucose").value;
-
-  if (!systolic || !diastolic || !pulse) {
-    alert("Please enter blood pressure and pulse.");
-    return;
-  }
-
-  const readings = getReadings();
-
-  readings.unshift({
-    date: new Date().toLocaleString(),
-    systolic,
-    diastolic,
-    pulse,
-    glucose
-  });
-
-  localStorage.setItem("healthReadings", JSON.stringify(readings));
-
-  document.getElementById("systolic").value = "";
-  document.getElementById("diastolic").value = "";
-  document.getElementById("pulse").value = "";
-  document.getElementById("glucose").value = "";
-
-  displayReadings();
-}
-
-function displayReadings() {
-  const readings = getReadings();
-  const history = document.getElementById("history");
-
-  if (readings.length === 0) {
-    history.innerHTML = "<p>No readings recorded yet.</p>";
-    return;
-  }
-
-  history.innerHTML = readings.map(r => `
-    <div class="reading">
-      <div class="date">${r.date}</div>
-      Blood pressure: ${r.systolic}/${r.diastolic} mmHg<br>
-      Pulse: ${r.pulse} bpm
-      ${r.glucose ? `<br>Blood sugar: ${r.glucose} mg/dL` : ""}
-    </div>
-  `).join("");
-}
-
-displayReadings();
-</script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", function() {
+        navigator.serviceWorker.register("./service-worker.js")
+          .catch(function(error) {
+            console.log("Service worker registration failed:", error);
+          });
+      });
+    }
+  </script>
 
 </body>
 </html>
