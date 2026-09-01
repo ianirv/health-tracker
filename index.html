@@ -90,7 +90,11 @@
     <label for="glucose">Blood sugar (mg/dL)</label>
     <input id="glucose" type="number" inputmode="decimal"
            placeholder="Optional">
-
+<label for="notes">Notes (optional)</label>
+<input id="notes" type="text"
+       placeholder="e.g. Before breakfast, after exercise"><label for="notes">Notes (optional)</label>
+<input id="notes" type="text"
+       placeholder="e.g. Before breakfast, after exercise">
     <button type="button" id="saveButton">Save Reading</button>
   </div>
 
@@ -173,12 +177,18 @@
 
       history.innerHTML = readings.map(function(reading, index) {
         let glucoseText = "";
+        let notesText = "";
 
         if (reading.glucose) {
           glucoseText =
             "<br>Blood sugar: " +
             reading.glucose +
             " mg/dL";
+          if (reading.notes) {
+    notesText =
+        "<br><b>Notes:</b> " +
+        reading.notes;
+}
         }
 
         return (
@@ -189,6 +199,7 @@
           reading.diastolic + ' mmHg<br>' +
           'Pulse: ' + reading.pulse + ' bpm' +
        glucoseText +
+          notesText +
 '<br><button type="button" onclick="deleteReading(' + index + ')">Delete</button>' +
 '</div>'
         );
@@ -321,6 +332,7 @@ new Date().toLocaleDateString("en-GB")
     "<th style='border:1px solid #ccc; padding:6px;'>BP</th>" +
     "<th style='border:1px solid #ccc; padding:6px;'>Pulse</th>" +
     "<th style='border:1px solid #ccc; padding:6px;'>Glucose</th>" +
+    "<th style='border:1px solid #ccc; padding:6px;'>Notes</th>" +
     "</tr>";
 
 selectedReadings
@@ -339,6 +351,8 @@ selectedReadings
             reading.pulse + "</td>" +
             "<td style='border:1px solid #ccc; padding:6px;'>" +
             (reading.glucose || "—") + "</td>" +
+          "<td style='border:1px solid #ccc; padding:6px;'>" +
+(reading.notes || "—") + "</td>" +
             "</tr>";
     });
 
@@ -918,8 +932,9 @@ function deleteAllReadings() {
       const pulse =
         document.getElementById("pulse").value.trim();
 
-      const glucose =
+      const glucose =  
         document.getElementById("glucose").value.trim();
+      const notes = document.getElementById("notes").value.trim();
 
       if (!systolic || !diastolic || !pulse) {
         alert("Please enter blood pressure and pulse.");
@@ -934,7 +949,8 @@ function deleteAllReadings() {
         systolic: systolic,
         diastolic: diastolic,
         pulse: pulse,
-        glucose: glucose
+        glucose: glucose,
+        notes: notes
       });
 
       localStorage.setItem(
@@ -946,6 +962,7 @@ function deleteAllReadings() {
       document.getElementById("diastolic").value = "";
       document.getElementById("pulse").value = "";
       document.getElementById("glucose").value = "";
+      document.getElementById("notes").value = "";
 
       displayReadings();
     }
