@@ -300,7 +300,9 @@ for (let i = 0; i <= labelSteps; i++) {
 ctx.textAlign = "left";
   
     // Systolic line
-    ctx.beginPath();
+  ctx.strokeStyle = "red";
+ctx.fillStyle = "red";  
+  ctx.beginPath();
 
     systolic.forEach(function(value, index) {
         const x = getX(index);
@@ -318,7 +320,9 @@ ctx.textAlign = "left";
     ctx.stroke();
 
     // Diastolic line
-    ctx.beginPath();
+  ctx.strokeStyle = "blue";
+ctx.fillStyle = "blue";  
+  ctx.beginPath();
 
     diastolic.forEach(function(value, index) {
         const x = getX(index);
@@ -336,9 +340,17 @@ ctx.textAlign = "left";
     ctx.stroke();
 
     // Labels
-    ctx.font = "14px Arial";
-    ctx.fillText("Systolic", padding, 20);
-    ctx.fillText("Diastolic", padding + 90, 20);
+   ctx.font = "14px Arial";
+
+ctx.fillStyle = "red";
+ctx.fillText("Systolic", padding, 20);
+
+ctx.fillStyle = "blue";
+ctx.fillText("Diastolic", padding + 90, 20);
+
+ctx.fillStyle = "black";
+ctx.strokeStyle = "black";
+  
 // Date labels along bottom
 ctx.font = "10px Arial";
 ctx.textAlign = "center";
