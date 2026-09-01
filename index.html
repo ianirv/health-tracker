@@ -90,6 +90,15 @@
     <label for="glucose">Blood sugar (mg/dL)</label>
     <input id="glucose" type="number" inputmode="decimal"
            placeholder="Optional">
+    <label for="glucoseTiming">Blood sugar timing</label>
+<select id="glucoseTiming">
+  <option value="">Not specified</option>
+  <option value="Fasting">Fasting</option>
+  <option value="Before meal">Before meal</option>
+  <option value="1 hour after meal">1 hour after meal</option>
+  <option value="2 hours after meal">2 hours after meal</option>
+  <option value="Bedtime">Bedtime</option>
+</select>
 <label for="notes">Notes (optional)</label>
 <input id="notes" type="text"
        placeholder="e.g. Before breakfast, after exercise">
@@ -178,11 +187,17 @@
         let glucoseText = "";
         let notesText = "";
 
-        if (reading.glucose) {
-          glucoseText =
-            "<br>Blood sugar: " +
-            reading.glucose +
-            " mg/dL";
+       if (reading.glucose) {
+    glucoseText =
+        "<br>Blood sugar: " +
+        reading.glucose +
+        " mg/dL";
+
+    if (reading.glucoseTiming) {
+        glucoseText +=
+            " (" + reading.glucoseTiming + ")";
+    }
+}
           if (reading.notes) {
     notesText =
         "<br><b>Notes:</b> " +
@@ -339,8 +354,9 @@ new Date().toLocaleDateString("en-GB") + "</p>" +
     "<th style='border:1px solid #ccc; padding:6px;'>Time</th>" +
     "<th style='border:1px solid #ccc; padding:6px;'>BP</th>" +
     "<th style='border:1px solid #ccc; padding:6px;'>Pulse</th>" +
-    "<th style='border:1px solid #ccc; padding:6px;'>Glucose</th>" +
-    "<th style='border:1px solid #ccc; padding:6px;'>Notes</th>" +
+    "<th style='border:1px solid #ccc; padding:6px;'>Glucose</th>"
+    "<th style='border:1px solid #ccc; padding:6px;'>Timing</th>" +
+       "<th style='border:1px solid #ccc; padding:6px;'>Notes</th>" +
     "</tr>";
 
 selectedReadings
@@ -359,6 +375,8 @@ selectedReadings
             reading.pulse + "</td>" +
             "<td style='border:1px solid #ccc; padding:6px;'>" +
             (reading.glucose || "—") + "</td>" +
+          "<td style='border:1px solid #ccc; padding:6px;'>" +
+(reading.glucoseTiming || "—") + "</td>" +
           "<td style='border:1px solid #ccc; padding:6px;'>" +
 (reading.notes || "—") + "</td>" +
             "</tr>";
@@ -942,6 +960,8 @@ function deleteAllReadings() {
 
       const glucose =  
         document.getElementById("glucose").value.trim();
+      const glucoseTiming =
+    document.getElementById("glucoseTiming").value;
       const notes = document.getElementById("notes").value.trim();
 
       if (!systolic || !diastolic || !pulse) {
@@ -957,8 +977,9 @@ function deleteAllReadings() {
         systolic: systolic,
         diastolic: diastolic,
         pulse: pulse,
-        glucose: glucose,
-        notes: notes
+      glucose: glucose,
+glucoseTiming: glucoseTiming,
+notes: notes
       });
 
       localStorage.setItem(
@@ -970,6 +991,7 @@ function deleteAllReadings() {
       document.getElementById("diastolic").value = "";
       document.getElementById("pulse").value = "";
       document.getElementById("glucose").value = "";
+      document.getElementById("glucoseTiming").value = "";
       document.getElementById("notes").value = "";
 
       displayReadings();
