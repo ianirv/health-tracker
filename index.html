@@ -202,16 +202,21 @@
         "<br><b>Notes:</b> " +
         reading.notes;
 }
-       
+let bpText = "";
+
+if (reading.systolic && reading.diastolic && reading.pulse) {
+    bpText =
+        "Blood pressure: " +
+        reading.systolic + "/" +
+        reading.diastolic + " mmHg<br>" +
+        "Pulse: " + reading.pulse + " bpm";
+}       
         return (
-          '<div class="reading">' +
-          '<div class="date">' + reading.date + '</div>' +
-          'Blood pressure: ' +
-          reading.systolic + '/' +
-          reading.diastolic + ' mmHg<br>' +
-          'Pulse: ' + reading.pulse + ' bpm' +
-       glucoseText +
-          notesText +
+       '<div class="reading">' +
+'<div class="date">' + reading.date + '</div>' +
+bpText +
+glucoseText +
+notesText +
 '<br><button type="button" onclick="deleteReading(' + index + ')">Delete</button>' +
 '</div>'
         );
@@ -445,7 +450,13 @@ html += "</table>";
     calculateAverage(90);
 }
 function drawBPChart() {
-   const readings = getReadings().slice().reverse();
+  const readings = getReadings()
+    .filter(function(reading) {
+        return reading.systolic &&
+               reading.diastolic;
+    })
+    .slice()
+    .reverse();
     const canvas = document.getElementById("bpChart");
 
     if (!canvas || readings.length === 0) {
@@ -962,10 +973,16 @@ function deleteAllReadings() {
     document.getElementById("glucoseTiming").value;
       const notes = document.getElementById("notes").value.trim();
 
-      if (!systolic || !diastolic || !pulse) {
-        alert("Please enter blood pressure and pulse.");
-        return;
-      }
+     if (!systolic && !diastolic && !pulse && !glucose) {
+    alert("Please enter a blood pressure or blood sugar reading.");
+    return;
+}
+
+if ((systolic || diastolic || pulse) &&
+    (!systolic || !diastolic || !pulse)) {
+    alert("For blood pressure, please enter systolic, diastolic and pulse.");
+    return;
+}
 
       const readings = getReadings();
 
