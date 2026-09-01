@@ -211,15 +211,15 @@ if (reading.systolic && reading.diastolic && reading.pulse) {
         reading.diastolic + " mmHg<br>" +
         "Pulse: " + reading.pulse + " bpm";
 }       
-        return (
-       '<div class="reading">' +
-'<div class="date">' + reading.date + '</div>' +
-bpText +
-glucoseText +
-notesText +
-'<br><button type="button" onclick="deleteReading(' + index + ')">Delete</button>' +
-'</div>'
-        );
+return (
+    '<div class="reading">' +
+    '<div class="date">' + reading.date + '</div>' +
+    bpText +
+    glucoseText +
+    notesText +
+    '<br><button type="button" onclick="deleteReading(' + index + ')">Delete</button>' +
+    '</div>'
+);
       }).join("");
       displayTrends();
     drawBPChart();
