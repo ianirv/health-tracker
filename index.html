@@ -138,7 +138,9 @@
   <button type="button" id="generateReportButton">
     Generate Report
   </button>
-
+<button type="button" id="printReportButton">
+  Print / Save PDF
+</button>
   <div id="healthReport"></div>
 </div>
   
@@ -192,7 +194,53 @@
       drawPulseChart();
       drawGlucoseChart();
     }
-function generateHealthReport() {
+function printHealthReport() {
+    const report = document.getElementById("healthReport");
+
+    if (!report || report.innerHTML.trim() === "") {
+        alert("Please generate a report first.");
+        return;
+    }
+
+    const printWindow = window.open("", "_blank");
+
+    printWindow.document.write(`
+        <html>
+        <head>
+            <title>Health Report</title>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    margin: 40px;
+                    line-height: 1.4;
+                }
+
+                h1 {
+                    margin-bottom: 20px;
+                }
+
+                h3 {
+                    margin-top: 24px;
+                }
+
+                p {
+                    margin-bottom: 16px;
+                }
+            </style>
+        </head>
+        <body>
+            <h1>Health Report</h1>
+            ${report.innerHTML}
+        </body>
+        </html>
+    `);
+
+    printWindow.document.close();
+    printWindow.focus();
+    printWindow.print();
+}
+    
+    function generateHealthReport() {
     const readings = getReadings();
     const days = Number(document.getElementById("reportPeriod").value);
     const report = document.getElementById("healthReport");
@@ -996,6 +1044,9 @@ document
 document
   .getElementById("generateReportButton")
   .addEventListener("click", generateHealthReport);
+document
+  .getElementById("printReportButton")
+  .addEventListener("click", printHealthReport);
     
     document
       .getElementById("restoreFile")
