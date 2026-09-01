@@ -296,9 +296,11 @@ function printHealthReport() {
 
     let html =
         "<h3>Last " + days + " Days</h3>" +
+      
         "<p><b>Number of readings:</b> " +
         selectedReadings.length + "</p>" +
-
+        "<p><b>Report generated:</b> " +
+new Date().toLocaleDateString() + "</p>" +
         "<p><b>Average blood pressure:</b> " +
         average("systolic") + "/" +
         average("diastolic") + " mmHg<br>" +
@@ -311,22 +313,36 @@ function printHealthReport() {
 
         "<h3>Readings</h3>";
 
-    selectedReadings
-        .slice()
-        .reverse()
-        .forEach(function(reading) {
-            html +=
-                "<p>" +
-                "<b>" + (reading.date || "") + "</b> " +
-                (reading.time || "") + "<br>" +
-                "Blood pressure: " +
-                reading.systolic + "/" +
-                reading.diastolic + " mmHg<br>" +
-                "Pulse: " + reading.pulse + " bpm<br>" +
-                "Blood glucose: " +
-                (reading.glucose || "—") + " mg/dL" +
-                "</p>";
-        });
+  html +=
+    "<table style='width:100%; border-collapse:collapse;'>" +
+    "<tr>" +
+    "<th style='border:1px solid #ccc; padding:6px;'>Date</th>" +
+    "<th style='border:1px solid #ccc; padding:6px;'>Time</th>" +
+    "<th style='border:1px solid #ccc; padding:6px;'>BP</th>" +
+    "<th style='border:1px solid #ccc; padding:6px;'>Pulse</th>" +
+    "<th style='border:1px solid #ccc; padding:6px;'>Glucose</th>" +
+    "</tr>";
+
+selectedReadings
+    .slice()
+    .reverse()
+    .forEach(function(reading) {
+        html +=
+            "<tr>" +
+            "<td style='border:1px solid #ccc; padding:6px;'>" +
+            (reading.date || "") + "</td>" +
+            "<td style='border:1px solid #ccc; padding:6px;'>" +
+            (reading.time || "") + "</td>" +
+            "<td style='border:1px solid #ccc; padding:6px;'>" +
+            reading.systolic + "/" + reading.diastolic + "</td>" +
+            "<td style='border:1px solid #ccc; padding:6px;'>" +
+            reading.pulse + "</td>" +
+            "<td style='border:1px solid #ccc; padding:6px;'>" +
+            (reading.glucose || "—") + "</td>" +
+            "</tr>";
+    });
+
+html += "</table>";
 
     report.innerHTML = html;
 } 
