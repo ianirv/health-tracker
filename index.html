@@ -117,6 +117,8 @@
   <div id="trends30">Not enough data yet.</div>
     <h3>Last 90 Days</h3>
 <div id="trends90">Not enough data yet.</div>
+    <h3>Blood Pressure Trend</h3>
+<canvas id="bpChart" width="600" height="300"></canvas>
 </div>
   
   <h2>Previous Readings</h2>
@@ -165,6 +167,7 @@
         );
       }).join("");
       displayTrends();
+    drawBPChart();
     }
 function displayTrends() {
     const readings = getReadings();
@@ -225,6 +228,97 @@ function displayTrends() {
         calculateAverage(30);
   document.getElementById("trends90").innerHTML =
     calculateAverage(90);
+}
+function drawBPChart() {
+    const readings = getReadings();
+    const canvas = document.getElementById("bpChart");
+
+    if (!canvas || readings.length === 0) {
+        return;
+    }
+
+    const ctx = canvas.getContext("2d");
+
+    const width = canvas.width;
+    const height = canvas.height;
+    const padding = 45;
+
+    ctx.clearRect(0, 0, width, height);
+
+    const systolic = readings.map(function(r) {
+        return Number(r.systolic);
+    });
+
+    const diastolic = readings.map(function(r) {
+        return Number(r.diastolic);
+    });
+
+    const allValues = systolic.concat(diastolic);
+    const minValue = Math.min.apply(null, allValues) - 10;
+    const maxValue = Math.max.apply(null, allValues) + 10;
+
+    function getX(index) {
+        if (readings.length === 1) {
+            return width / 2;
+        }
+
+        return padding +
+            index * (width - padding * 2) / (readings.length - 1);
+    }
+
+    function getY(value) {
+        return height - padding -
+            ((value - minValue) / (maxValue - minValue)) *
+            (height - padding * 2);
+    }
+
+    // Axes
+    ctx.beginPath();
+    ctx.moveTo(padding, padding);
+    ctx.lineTo(padding, height - padding);
+    ctx.lineTo(width - padding, height - padding);
+    ctx.stroke();
+
+    // Systolic line
+    ctx.beginPath();
+
+    systolic.forEach(function(value, index) {
+        const x = getX(index);
+        const y = getY(value);
+
+        if (index === 0) {
+            ctx.moveTo(x, y);
+        } else {
+            ctx.lineTo(x, y);
+        }
+
+        ctx.fillRect(x - 2, y - 2, 4, 4);
+    });
+
+    ctx.stroke();
+
+    // Diastolic line
+    ctx.beginPath();
+
+    diastolic.forEach(function(value, index) {
+        const x = getX(index);
+        const y = getY(value);
+
+        if (index === 0) {
+            ctx.moveTo(x, y);
+        } else {
+            ctx.lineTo(x, y);
+        }
+
+        ctx.strokeRect(x - 2, y - 2, 4, 4);
+    });
+
+    ctx.stroke();
+
+    // Labels
+    ctx.font = "14px Arial";
+    ctx.fillText("Systolic", padding, 20);
+    ctx.fillText("Diastolic", padding + 90, 20);
 }
     
     function deleteReading(index) {
