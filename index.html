@@ -214,8 +214,7 @@
     );
 
     // On phones/tablets, open the Share menu so Drive can be selected.
-    if (navigator.share && navigator.canShare &&
-        navigator.canShare({ files: [file] })) {
+    if (navigator.share) {
         try {
             await navigator.share({
                 title: "Health Tracker Backup",
