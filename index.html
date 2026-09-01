@@ -300,7 +300,7 @@ function printHealthReport() {
         "<p><b>Number of readings:</b> " +
         selectedReadings.length + "</p>" +
         "<p><b>Report generated:</b> " +
-new Date().toLocaleDateString() + "</p>" +
+new Date().toLocaleDateString("en-GB")
         "<p><b>Average blood pressure:</b> " +
         average("systolic") + "/" +
         average("diastolic") + " mmHg<br>" +
@@ -929,7 +929,7 @@ function deleteAllReadings() {
       const readings = getReadings();
 
       readings.unshift({
-       date: new Date().toLocaleDateString(),
+     date: new Date().toLocaleDateString("en-GB"),
        time: new Date().toLocaleTimeString(),
         systolic: systolic,
         diastolic: diastolic,
