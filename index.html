@@ -96,6 +96,8 @@
     <button type="button" id="backupButton">Backup Readings</button>
 
     <button type="button" id="restoreButton">Restore Readings</button>
+   
+    <button type="button" id="deleteAllButton">Delete All Readings</button>
 
     <input
       id="restoreFile"
@@ -161,6 +163,21 @@ function deleteReading(index) {
     localStorage.setItem("healthReadings", JSON.stringify(readings));
     displayReadings();
 }
+function deleteAllReadings() {
+    const readings = getReadings();
+
+    if (readings.length === 0) {
+        alert("There are no readings to delete.");
+        return;
+    }
+
+    if (!confirm("Delete ALL readings? This cannot be undone.")) {
+        return;
+    }
+
+    localStorage.removeItem("healthReadings");
+    displayReadings();
+}    
     function saveReading() {
       const systolic =
         document.getElementById("systolic").value.trim();
@@ -311,7 +328,9 @@ function deleteReading(index) {
       .addEventListener("click", function() {
         document.getElementById("restoreFile").click();
       });
-
+document
+  .getElementById("deleteAllButton")
+  .addEventListener("click", deleteAllReadings);
     document
       .getElementById("restoreFile")
       .addEventListener("change", function(event) {
