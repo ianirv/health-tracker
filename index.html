@@ -201,7 +201,7 @@ function deleteAllReadings() {
     if (!time && date.includes(",")) {
         const parts = date.split(",");
         date = parts[0].trim();
-        time = parts.slice(1).join(",").trim();
+        time = parts.slice(1).join(";").trim();
     }
 
     rows.push([
