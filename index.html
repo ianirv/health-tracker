@@ -269,11 +269,18 @@ function printHealthReport() {
     cutoff.setDate(now.getDate() - days);
 
     const selectedReadings = readings.filter(function(reading) {
-        const readingDate = new Date(
-            reading.time
-                ? reading.date + " " + reading.time
-                : reading.date
-        );
+      const dateParts = reading.date.split("/");
+let readingDate;
+
+if (dateParts.length === 3) {
+    readingDate = new Date(
+        Number(dateParts[2]),
+        Number(dateParts[1]) - 1,
+        Number(dateParts[0])
+    );
+} else {
+    readingDate = new Date(reading.date);
+}  
 
         return !isNaN(readingDate) && readingDate >= cutoff;
     });
