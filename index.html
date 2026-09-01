@@ -99,6 +99,8 @@
    
     <button type="button" id="deleteAllButton">Delete All Readings</button>
 
+    <button type="button" id="exportCsvButton">Export to CSV</button>
+
     <input
       id="restoreFile"
       type="file"
@@ -177,7 +179,53 @@ function deleteAllReadings() {
 
     localStorage.removeItem("healthReadings");
     displayReadings();
-}    
+} 
+
+ function exportToCSV() {
+    const readings = getReadings();
+
+    if (readings.length === 0) {
+        alert("There are no readings to export.");
+        return;
+    }
+
+    const rows = [
+        ["Date", "Time", "Systolic", "Diastolic", "Pulse", "Blood Glucose"]
+    ];
+
+    readings.forEach(function(reading) {
+        rows.push([
+            reading.date || "",
+            reading.time || "",
+            reading.systolic || "",
+            reading.diastolic || "",
+            reading.pulse || "",
+            reading.glucose || ""
+        ]);
+    });
+
+    const csv = rows.map(function(row) {
+        return row.map(function(value) {
+            return '"' + String(value).replace(/"/g, '""') + '"';
+        }).join(",");
+    }).join("\n");
+
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+
+    link.href = url;
+    link.download = "health-readings.csv";
+
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+
+    setTimeout(function() {
+        URL.revokeObjectURL(url);
+    }, 1000);
+}   
+    
     function saveReading() {
       const systolic =
         document.getElementById("systolic").value.trim();
@@ -331,6 +379,11 @@ function deleteAllReadings() {
 document
   .getElementById("deleteAllButton")
   .addEventListener("click", deleteAllReadings);
+
+  document
+  .getElementById("exportCsvButton")
+  .addEventListener("click", exportToCSV);
+    
     document
       .getElementById("restoreFile")
       .addEventListener("change", function(event) {
