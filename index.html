@@ -267,6 +267,7 @@ function printHealthReport() {
 
     const cutoff = new Date();
     cutoff.setDate(now.getDate() - days);
+      cutoff.setHours(0, 0, 0, 0);
 
     const selectedReadings = readings.filter(function(reading) {
       const dateParts = reading.date.split("/");
