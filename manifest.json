@@ -1,0 +1,10 @@
+{
+  "name": "My Health Tracker",
+  "short_name": "Health Tracker",
+  "description": "Record blood pressure, pulse and blood sugar readings",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f4f6f8",
+  "theme_color": "#1976d2"
+}
