@@ -194,20 +194,30 @@ function deleteAllReadings() {
     ];
 
     readings.forEach(function(reading) {
-        rows.push([
-            reading.date || "",
-            reading.time || "",
-            reading.systolic || "",
-            reading.diastolic || "",
-            reading.pulse || "",
-            reading.glucose || ""
-        ]);
-    });
+    let date = reading.date || "";
+    let time = reading.time || "";
+
+    // Older readings stored date and time together.
+    if (!time && date.includes(",")) {
+        const parts = date.split(",");
+        date = parts[0].trim();
+        time = parts.slice(1).join(",").trim();
+    }
+
+    rows.push([
+        date,
+        time,
+        reading.systolic || "",
+        reading.diastolic || "",
+        reading.pulse || "",
+        reading.glucose || ""
+    ]);
+});
 
     const csv = rows.map(function(row) {
         return row.map(function(value) {
             return '"' + String(value).replace(/"/g, '""') + '"';
-        }).join(",");
+        }).join(";");
     }).join("\n");
 
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
@@ -247,7 +257,8 @@ function deleteAllReadings() {
       const readings = getReadings();
 
       readings.unshift({
-        date: new Date().toLocaleString(),
+       date: new Date().toLocaleDateString(),
+       time: new Date().toLocaleTimeString(),
         systolic: systolic,
         diastolic: diastolic,
         pulse: pulse,
