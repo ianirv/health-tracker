@@ -191,41 +191,56 @@
       displayReadings();
     }
 
-    function backupReadings() {
-      const readings = getReadings();
+ async function backupReadings() {
+    const readings = getReadings();
 
-      if (readings.length === 0) {
+    if (readings.length === 0) {
         alert("There are no readings to back up.");
         return;
-      }
+    }
 
-      const backup = {
+    const backup = {
         app: "My Health Tracker",
         created: new Date().toISOString(),
         readings: readings
-      };
+    };
 
-      const data = JSON.stringify(backup, null, 2);
+    const data = JSON.stringify(backup, null, 2);
 
-      const blob = new Blob(
+    const file = new File(
         [data],
+        "health-tracker-backup.json",
         { type: "application/json" }
-      );
+    );
 
-      const url = URL.createObjectURL(blob);
-
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = "health-tracker-backup.json";
-
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-
-      setTimeout(function() {
-        URL.revokeObjectURL(url);
-      }, 1000);
+    // On phones/tablets, open the Share menu so Drive can be selected.
+    if (navigator.share && navigator.canShare &&
+        navigator.canShare({ files: [file] })) {
+        try {
+            await navigator.share({
+                title: "Health Tracker Backup",
+                files: [file]
+            });
+            return;
+        } catch (error) {
+            // If Share is cancelled, don't download another copy.
+            if (error.name === "AbortError") return;
+        }
     }
+
+    // Fallback: normal download
+    const url = URL.createObjectURL(file);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "health-tracker-backup.json";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+
+    setTimeout(function() {
+        URL.revokeObjectURL(url);
+    }, 1000);
+}
 
     function restoreReadings(file) {
       if (!file) {
