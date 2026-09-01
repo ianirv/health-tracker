@@ -91,6 +91,23 @@
 
   </div>
 
+  <div class="card">
+  <h2>Backup & Restore</h2>
+
+  <button type="button" onclick="backupReadings()">
+    Backup Readings
+  </button>
+
+  <button type="button" onclick="document.getElementById('restoreFile').click()">
+    Restore Readings
+  </button>
+
+  <input id="restoreFile"
+         type="file"
+         accept=".json,application/json"
+         onchange="restoreReadings(event)"
+         style="display:none">
+  </div>
   <h2>Previous Readings</h2>
   <div id="history"></div>
 
@@ -131,6 +148,68 @@
       document.getElementById("pulse").value = "";
       document.getElementById("glucose").value = "";
 
+      function backupReadings() {
+  const readings = getReadings();
+
+  if (readings.length === 0) {
+    alert("There are no readings to back up.");
+    return;
+  }
+
+  const backup = {
+    app: "My Health Tracker",
+    created: new Date().toISOString(),
+    readings: readings
+  };
+
+  const data = JSON.stringify(backup, null, 2);
+  const blob = new Blob([data], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "health-tracker-backup.json";
+  link.click();
+
+  URL.revokeObjectURL(url);
+}
+
+function restoreReadings(event) {
+  const file = event.target.files[0];
+
+  if (!file) return;
+
+  const reader = new FileReader();
+
+  reader.onload = function(e) {
+    try {
+      const backup = JSON.parse(e.target.result);
+
+      if (!backup.readings || !Array.isArray(backup.readings)) {
+        throw new Error("Invalid backup");
+      }
+
+      if (!confirm("Restore this backup? This will replace the readings currently stored in the app.")) {
+        return;
+      }
+
+      localStorage.setItem(
+        "healthReadings",
+        JSON.stringify(backup.readings)
+      );
+
+      displayReadings();
+      alert("Readings restored successfully.");
+
+    } catch (error) {
+      alert("This does not appear to be a valid Health Tracker backup.");
+    }
+
+    event.target.value = "";
+  };
+
+  reader.readAsText(file);
+}
       displayReadings();
     }
 
@@ -154,7 +233,6 @@
         `;
       }).join("");
     }
-
     displayReadings();
 
     if ("serviceWorker" in navigator) {
