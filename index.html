@@ -127,7 +127,7 @@
         return;
       }
 
-      history.innerHTML = readings.map(function(reading) {
+      history.innerHTML = readings.map(function(reading, index) {
         let glucoseText = "";
 
         if (reading.glucose) {
@@ -144,12 +144,23 @@
           reading.systolic + '/' +
           reading.diastolic + ' mmHg<br>' +
           'Pulse: ' + reading.pulse + ' bpm' +
-          glucoseText +
-          '</div>'
+       glucoseText +
+'<br><button type="button" onclick="deleteReading(' + index + ')">Delete</button>' +
+'</div>'
         );
       }).join("");
     }
+function deleteReading(index) {
+    const readings = getReadings();
 
+    if (!confirm("Delete this reading?")) {
+        return;
+    }
+
+    readings.splice(index, 1);
+    localStorage.setItem("healthReadings", JSON.stringify(readings));
+    displayReadings();
+}
     function saveReading() {
       const systolic =
         document.getElementById("systolic").value.trim();
