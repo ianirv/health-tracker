@@ -230,7 +230,7 @@ function displayTrends() {
     calculateAverage(90);
 }
 function drawBPChart() {
-    const readings = getReadings();
+   const readings = getReadings().slice().reverse();
     const canvas = document.getElementById("bpChart");
 
     if (!canvas || readings.length === 0) {
@@ -278,7 +278,27 @@ function drawBPChart() {
     ctx.lineTo(padding, height - padding);
     ctx.lineTo(width - padding, height - padding);
     ctx.stroke();
+// Y-axis blood pressure labels
+ctx.font = "12px Arial";
+ctx.textAlign = "right";
 
+const labelSteps = 4;
+
+for (let i = 0; i <= labelSteps; i++) {
+    const value =
+        minValue + ((maxValue - minValue) * i / labelSteps);
+
+    const y = getY(value);
+
+    ctx.fillText(
+        Math.round(value),
+        padding - 8,
+        y + 4
+    );
+}
+
+ctx.textAlign = "left";
+  
     // Systolic line
     ctx.beginPath();
 
@@ -319,6 +339,28 @@ function drawBPChart() {
     ctx.font = "14px Arial";
     ctx.fillText("Systolic", padding, 20);
     ctx.fillText("Diastolic", padding + 90, 20);
+// Date labels along bottom
+ctx.font = "11px Arial";
+ctx.textAlign = "center";
+
+readings.forEach(function(reading, index) {
+    const x = getX(index);
+
+    let dateLabel = reading.date || "";
+
+    // Keep the label short
+    if (dateLabel.includes(",")) {
+        dateLabel = dateLabel.split(",")[0];
+    }
+
+    ctx.fillText(
+        dateLabel,
+        x,
+        height - padding + 20
+    );
+});
+
+ctx.textAlign = "left";
 }
     
     function deleteReading(index) {
